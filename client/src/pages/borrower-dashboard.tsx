@@ -22,7 +22,7 @@ export default function BorrowerDashboard() {
 
   const { data: applications, isLoading } = useQuery<LoanApplication[]>({
     queryKey: ["/api/loan-applications", { borrowerId: user?.id }],
-    enabled: !!user,
+    enabled: !!user && user.profileStatus === 'approved',
   });
 
   const getStatusColor = (status: string) => {
@@ -36,7 +36,16 @@ export default function BorrowerDashboard() {
     }
   };
 
-  const profileCompletion = 75; // Calculate based on completed fields
+  const getProfileCompletion = (profileStatus: string) => {
+    switch (profileStatus) {
+      case 'approved': return 100;
+      case 'pending': return 90;
+      case 'incomplete': return 30;
+      default: return 0;
+    }
+  };
+
+  const profileCompletion = getProfileCompletion(user?.profileStatus || 'incomplete');
 
   return (
     <div className="pt-16 bg-ucova-gray min-h-screen">
@@ -50,24 +59,51 @@ export default function BorrowerDashboard() {
         <Card className="mb-8">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Profile Completion</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Profile Status</h2>
               <span className="text-ucova-blue font-medium">{profileCompletion}% Complete</span>
             </div>
             <Progress value={profileCompletion} className="mb-4" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center">
-                <CheckCircle className="h-5 w-5 text-ucova-success mr-2" />
-                <span className="text-sm text-gray-700">Basic Information</span>
+            
+            {user?.profileStatus === 'incomplete' && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center mb-2">
+                  <Clock className="h-5 w-5 text-ucova-warning mr-2" />
+                  <span className="font-medium text-gray-900">Profile Incomplete</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">
+                  Complete your profile to unlock loan offers and apply for loans.
+                </p>
+                <Link href="/profile-completion">
+                  <Button className="bg-ucova-blue hover:bg-ucova-blue/90">
+                    Complete Profile
+                  </Button>
+                </Link>
               </div>
-              <div className="flex items-center">
-                <CheckCircle className="h-5 w-5 text-ucova-success mr-2" />
-                <span className="text-sm text-gray-700">Identity Verification</span>
+            )}
+            
+            {user?.profileStatus === 'pending' && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center mb-2">
+                  <Clock className="h-5 w-5 text-ucova-blue mr-2" />
+                  <span className="font-medium text-gray-900">Profile Under Review</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Your profile is being reviewed. You'll be notified once approved.
+                </p>
               </div>
-              <div className="flex items-center">
-                <Clock className="h-5 w-5 text-ucova-warning mr-2" />
-                <span className="text-sm text-gray-700">Financial Documents</span>
+            )}
+            
+            {user?.profileStatus === 'approved' && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center mb-2">
+                  <CheckCircle className="h-5 w-5 text-ucova-success mr-2" />
+                  <span className="font-medium text-gray-900">Profile Approved</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Your profile is approved. You can now apply for loans and view offers.
+                </p>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -99,12 +135,19 @@ export default function BorrowerDashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Active Applications</CardTitle>
-                <Link href="/loan-application">
-                  <Button className="bg-ucova-blue hover:bg-ucova-blue/90">
+                {user?.profileStatus === 'approved' ? (
+                  <Link href="/loan-application">
+                    <Button className="bg-ucova-blue hover:bg-ucova-blue/90">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Apply for Loan
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button disabled className="bg-gray-300 text-gray-500">
                     <Plus className="h-4 w-4 mr-2" />
                     Apply for Loan
                   </Button>
-                </Link>
+                )}
               </CardHeader>
               <CardContent>
                 {isLoading ? (
@@ -155,38 +198,40 @@ export default function BorrowerDashboard() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Available Offers */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Available Offers</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Card className="border border-gray-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900">Quick Cash</h4>
-                      <span className="text-sm text-ucova-success">4.5% APR</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">Up to $10,000 • 6-24 months</p>
-                    <Button className="w-full bg-ucova-blue hover:bg-ucova-blue/90 text-sm">
-                      Apply Now
-                    </Button>
-                  </CardContent>
-                </Card>
-                <Card className="border border-gray-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900">Business Loan</h4>
-                      <span className="text-sm text-ucova-success">3.8% APR</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">Up to $50,000 • 12-60 months</p>
-                    <Button className="w-full bg-ucova-blue hover:bg-ucova-blue/90 text-sm">
-                      Apply Now
-                    </Button>
-                  </CardContent>
-                </Card>
-              </CardContent>
-            </Card>
+            {/* Available Offers - Only show if profile is approved */}
+            {user?.profileStatus === 'approved' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Available Offers</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Card className="border border-gray-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-gray-900">Quick Cash</h4>
+                        <span className="text-sm text-ucova-success">4.5% Interest Rate</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">Up to $10,000 • 6-24 months</p>
+                      <Button className="w-full bg-ucova-blue hover:bg-ucova-blue/90 text-sm">
+                        Apply Now
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  <Card className="border border-gray-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-gray-900">Business Loan</h4>
+                        <span className="text-sm text-ucova-success">3.8% Interest Rate</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">Up to $50,000 • 12-60 months</p>
+                      <Button className="w-full bg-ucova-blue hover:bg-ucova-blue/90 text-sm">
+                        Apply Now
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Notifications */}
             <Card>

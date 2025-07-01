@@ -11,6 +11,10 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   role: text("role").notNull().default("borrower"), // borrower, agent, compliance, admin
   isActive: boolean("is_active").default(true),
+  profileStatus: text("profile_status").default("incomplete"), // incomplete, pending, approved, rejected
+  employmentStatus: text("employment_status"),
+  monthlyIncome: text("monthly_income"),
+  address: text("address"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

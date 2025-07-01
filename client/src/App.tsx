@@ -17,6 +17,7 @@ import AgentPortal from "@/pages/agent-portal";
 import ComplianceDashboard from "@/pages/compliance-dashboard";
 import AdminDashboard from "@/pages/admin-dashboard";
 import BorrowerProfile from "@/pages/borrower-profile";
+import ProfileCompletion from "@/pages/profile-completion";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ component: Component, allowedRoles }: { 
@@ -60,6 +61,9 @@ function Router() {
         </Route>
         <Route path="/profile">
           <ProtectedRoute component={BorrowerProfile} allowedRoles={["borrower"]} />
+        </Route>
+        <Route path="/profile-completion">
+          <ProtectedRoute component={ProfileCompletion} allowedRoles={["borrower"]} />
         </Route>
 
         {/* Protected routes for agents */}

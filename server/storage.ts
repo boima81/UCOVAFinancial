@@ -74,8 +74,17 @@ export class MemStorage implements IStorage {
     testUsers.forEach(userData => {
       const user: User = {
         id: this.currentUserId++,
-        ...userData,
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone,
+        nationalId: userData.nationalId,
+        password: userData.password,
+        role: userData.role,
         isActive: true,
+        profileStatus: userData.role === 'borrower' ? 'incomplete' : 'approved',
+        employmentStatus: null,
+        monthlyIncome: null,
+        address: null,
         createdAt: new Date(),
       };
       this.users.set(user.id, user);
@@ -109,8 +118,17 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const user: User = {
       id: this.currentUserId++,
-      ...insertUser,
+      name: insertUser.name,
+      email: insertUser.email,
+      phone: insertUser.phone,
+      nationalId: insertUser.nationalId || null,
+      password: insertUser.password,
+      role: insertUser.role || 'borrower',
       isActive: true,
+      profileStatus: 'incomplete',
+      employmentStatus: null,
+      monthlyIncome: null,
+      address: null,
       createdAt: new Date(),
     };
     this.users.set(user.id, user);
