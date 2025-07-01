@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/footer";
 import { useAuth } from "@/hooks/use-auth";
 
 // Import all pages
@@ -18,6 +19,9 @@ import ComplianceDashboard from "@/pages/compliance-dashboard";
 import AdminDashboard from "@/pages/admin-dashboard";
 import BorrowerProfile from "@/pages/borrower-profile";
 import ProfileCompletion from "@/pages/profile-completion";
+import UserProfileView from "@/pages/user-profile-view";
+import LoanApplicationDetail from "@/pages/loan-application-detail";
+import AgencyDetails from "@/pages/agency-details";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ component: Component, allowedRoles }: { 
@@ -65,6 +69,15 @@ function Router() {
         <Route path="/profile-completion">
           <ProtectedRoute component={ProfileCompletion} allowedRoles={["borrower"]} />
         </Route>
+        <Route path="/user-profile/:id">
+          <ProtectedRoute component={UserProfileView} allowedRoles={["admin", "compliance"]} />
+        </Route>
+        <Route path="/loan-application/:id">
+          <ProtectedRoute component={LoanApplicationDetail} allowedRoles={["agent", "admin"]} />
+        </Route>
+        <Route path="/agency/:id">
+          <ProtectedRoute component={AgencyDetails} allowedRoles={["compliance", "admin"]} />
+        </Route>
 
         {/* Protected routes for agents */}
         <Route path="/agent-portal">
@@ -84,6 +97,7 @@ function Router() {
         {/* Fallback to 404 */}
         <Route component={NotFound} />
       </Switch>
+      <Footer />
     </>
   );
 }

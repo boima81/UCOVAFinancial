@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Users, DollarSign, Percent, TrendingUp, Download, FileText } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface User {
   id: number;
@@ -26,6 +27,7 @@ interface Stats {
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users");
+  const [, setLocation] = useLocation();
 
   const { data: users, isLoading: usersLoading } = useQuery<User[]>({
     queryKey: ["/api/users"],
@@ -163,10 +165,14 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {users.map((user) => (
-                          <tr key={user.id} className="border-b border-gray-100">
+                          <tr 
+                            key={user.id} 
+                            className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => setLocation(`/user-profile/${user.id}`)}
+                          >
                             <td className="py-3 px-4">
                               <div>
-                                <div className="font-medium text-gray-900">{user.name}</div>
+                                <div className="font-medium text-ucova-blue hover:underline">{user.name}</div>
                                 <div className="text-sm text-gray-500">{user.email}</div>
                               </div>
                             </td>

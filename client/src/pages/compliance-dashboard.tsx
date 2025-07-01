@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building, Shield, AlertTriangle, File, Download } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface AuditLog {
   id: number;
@@ -20,6 +21,8 @@ interface Stats {
 }
 
 export default function ComplianceDashboard() {
+  const [, setLocation] = useLocation();
+  
   const { data: auditLogs, isLoading } = useQuery<AuditLog[]>({
     queryKey: ["/api/audit-logs"],
   });
@@ -106,8 +109,11 @@ export default function ComplianceDashboard() {
               <Card className="border border-gray-200">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium text-gray-900">Liberty Bank Microfinance</h4>
+                    <div 
+                      className="cursor-pointer"
+                      onClick={() => setLocation('/agency/1')}
+                    >
+                      <h4 className="font-medium text-ucova-blue hover:underline">Liberty Bank Microfinance</h4>
                       <p className="text-sm text-gray-500">Registration submitted: Jan 20, 2024</p>
                     </div>
                     <div className="flex space-x-2">

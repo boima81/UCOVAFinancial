@@ -104,6 +104,64 @@ export class MemStorage implements IStorage {
       };
       this.creditScores.set(borrower.id, creditScore);
     }
+
+    // Add mock pending loan applications
+    const mockApplications = [
+      {
+        borrowerId: 1,
+        amount: '25000',
+        purpose: 'Business expansion for local farming equipment',
+        employmentStatus: 'self-employed',
+        monthlyIncome: '3500',
+        guarantorName: 'Marie Johnson',
+        guarantorContact: '+231-777-987-654',
+        creditScore: 720,
+        status: 'Under Review'
+      },
+      {
+        borrowerId: 5, // Boima's application
+        amount: '15000', 
+        purpose: 'Education funding for university tuition',
+        employmentStatus: 'employed',
+        monthlyIncome: '2200',
+        guarantorName: 'Joseph Smith',
+        guarantorContact: '+231-777-456-789',
+        creditScore: 685,
+        status: 'Under Review'
+      },
+      {
+        borrowerId: 1,
+        amount: '8500',
+        purpose: 'Vehicle purchase for transportation business',
+        employmentStatus: 'business-owner',
+        monthlyIncome: '2800',
+        guarantorName: 'Rebecca Wilson',
+        guarantorContact: '+231-777-321-987',
+        creditScore: 710,
+        status: 'Under Review'
+      }
+    ];
+
+    mockApplications.forEach(appData => {
+      const application: LoanApplication = {
+        id: this.currentApplicationId++,
+        applicationId: `LA-${Date.now()}-${this.currentApplicationId}`,
+        borrowerId: appData.borrowerId,
+        amount: appData.amount,
+        purpose: appData.purpose,
+        status: appData.status,
+        employmentStatus: appData.employmentStatus,
+        monthlyIncome: appData.monthlyIncome,
+        guarantorName: appData.guarantorName,
+        guarantorContact: appData.guarantorContact,
+        creditScore: appData.creditScore,
+        submittedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Random date within last week
+        reviewedAt: null,
+        reviewedBy: null,
+        comments: null,
+      };
+      this.loanApplications.set(application.id, application);
+    });
   }
 
   // Users

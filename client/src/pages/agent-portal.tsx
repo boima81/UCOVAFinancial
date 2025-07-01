@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { FileText, CheckCircle, XCircle, Clock } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface LoanApplication {
   id: number;
@@ -30,6 +31,7 @@ export default function AgentPortal() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
 
   const { data: applications, isLoading } = useQuery<LoanApplication[]>({
     queryKey: ["/api/loan-applications"],
@@ -193,7 +195,12 @@ export default function AgentPortal() {
                   <tbody>
                     {applications.map((app) => (
                       <tr key={app.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-3 px-4 text-ucova-blue font-medium">{app.applicationId}</td>
+                        <td 
+                          className="py-3 px-4 text-ucova-blue font-medium cursor-pointer hover:underline"
+                          onClick={() => setLocation(`/loan-application/${app.id}`)}
+                        >
+                          {app.applicationId}
+                        </td>
                         <td className="py-3 px-4">
                           <div>
                             <div className="font-medium text-gray-900">Borrower #{app.borrowerId}</div>
