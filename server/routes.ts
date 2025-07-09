@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+// import { createServer, type Server } from "http"; // createServer is not needed for serverless wrapping
 import { storage } from "./storage";
 import { 
   insertUserSchema, 
@@ -9,7 +9,7 @@ import {
   loginSchema 
 } from "@shared/schema";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<void> { // Returns Promise<void> instead of Promise<Server>
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {
